@@ -78,7 +78,22 @@ df_payment = pd.read_sql("""
 
 # STEP 6
 # Replace None with your code
-df_credit = None
+df_credit = pd.read_sql("""
+    SELECT
+        employees.employeeNumber,
+        employees.firstName,
+        employees.lastName,
+        COUNT(customers.customerNumber) AS customer_count
+    FROM employees
+    JOIN customers
+        ON employees.employeeNumber = customers.salesRepEmployeeNumber
+    GROUP BY
+        employees.employeeNumber,
+        employees.firstName,
+        employees.lastName
+    HAVING AVG(customers.creditLimit) > 90000
+    ORDER BY customer_count DESC;
+""", conn)
 
 # STEP 7
 # Replace None with your code
