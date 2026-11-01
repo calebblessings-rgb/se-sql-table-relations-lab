@@ -149,6 +149,34 @@ df_customers = pd.read_sql("""
 
 # STEP 10
 # Replace None with your code
-df_under_20 = None
+df_under_20 = pd.read_sql("""
+    WITH products_under_20 AS (
+        SELECT
+            orderdetails.productCode
+        FROM orderdetails
+        JOIN orders
+            ON orderdetails.orderNumber = orders.orderNumber
+        GROUP BY orderdetails.productCode
+        HAVING COUNT(DISTINCT orders.customerNumber) < 20
+    )
+    SELECT DISTINCT
+        employees.employeeNumber,
+        employees.firstName,
+        employees.lastName,
+        offices.city,
+        offices.officeCode
+    FROM employees
+    JOIN offices
+        ON employees.officeCode = offices.officeCode
+    JOIN customers
+        ON employees.employeeNumber = customers.salesRepEmployeeNumber
+    JOIN orders
+        ON customers.customerNumber = orders.customerNumber
+    JOIN orderdetails
+        ON orders.orderNumber = orderdetails.orderNumber
+    JOIN products_under_20
+        ON orderdetails.productCode = products_under_20.productCode
+    ORDER BY employees.lastName ASC, employees.firstName ASC;
+""", conn)
 
 conn.close()
