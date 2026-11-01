@@ -49,7 +49,18 @@ df_employee = pd.read_sql("""
 
 # STEP 4
 # Replace None with your code
-df_contacts = None
+df_contacts = pd.read_sql("""
+    SELECT
+        customers.contactFirstName,
+        customers.contactLastName,
+        customers.phone,
+        customers.salesRepEmployeeNumber
+    FROM customers
+    LEFT JOIN orders
+        ON customers.customerNumber = orders.customerNumber
+    WHERE orders.orderNumber IS NULL
+    ORDER BY customers.contactLastName;
+""", conn)
 
 # STEP 5
 # Replace None with your code
