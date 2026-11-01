@@ -113,7 +113,21 @@ df_product_sold = pd.read_sql("""
 
 # STEP 8
 # Replace None with your code
-df_total_customers = None
+df_total_customers = pd.read_sql("""
+    SELECT
+        products.productName,
+        products.productCode,
+        COUNT(DISTINCT orders.customerNumber) AS numpurchasers
+    FROM products
+    JOIN orderdetails
+        ON products.productCode = orderdetails.productCode
+    JOIN orders
+        ON orderdetails.orderNumber = orders.orderNumber
+    GROUP BY
+        products.productCode,
+        products.productName
+    ORDER BY numpurchasers DESC;
+""", conn)
 
 # STEP 9
 # Replace None with your code
